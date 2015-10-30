@@ -3,25 +3,30 @@ describe('FormController', function(){
   var formController;
 
   beforeEach(angular.mock.module('shuffling'));
-  beforeEach(angular.mock.inject(function($controller){
-    formController = $controller('FormController');
+  beforeEach(angular.mock.inject(function($controller, $rootScope){
+    scope = $rootScope.$new();
+    formController = $controller('FormController', {$scope: scope});
   }));
 
-//On submit (not submit the page HTML style), add the data to an array of JSON objects to be held in localStorage. 
+//On submit, add the data to an array of JSON objects to be held in localStorage. 
   it('should add user-entered data on form submit to a JSON array in localstorage', function () {
-    expect(formController)
+    formController.guestName = "something";
+    formController.transitionDate = "somethingelse";
+    expect(formController.guestName).not.toBe('');
+    expect(formController.transitionDate).not.toBe('');
+    expect(formController.addGuest()).toHaveBeenCalled();
   });
 
 // If there exists no data in localStorage, pre-populate the data with a few examples on application init.
   it('should pre-populate data in localStorage if no data exists on init', function () {
-
+    
   });
 
 // An option should exist for each to edit their status, following the rules of:
 
 // "pick up" to "arrived"
   it('should allow a user to change their status from "pick up" to arrived"', function() {
-
+    
   });
 
 // "drop off" to "arrived"
