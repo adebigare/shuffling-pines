@@ -21,7 +21,7 @@ A livereload using gulp connect that watches all js and css and html changes
 gulp.task('buildApp', function(){
   return gulp.src('src/js/**/*.js')
     .pipe(concat('app.js'))
-    .pipe(uglify())
+    //.pipe(uglify())
     .pipe(gulp.dest('dist'))
     .pipe(connect.reload());
 });

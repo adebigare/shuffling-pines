@@ -24,63 +24,71 @@
 
   <body ng-app="shuffling" class="container">
     <h1>Shuffling Pines</h1>
-    <div class="row"ng-controller="FormController as vm" >
-      <div class="col-md-12">
+    <div class="row">
+      <div class="col-md-12" ng-controller="TabController as tc">
         <!-- Nav tabs -->
         <ul class="nav nav-tabs" role="tablist">
           <li role="presentation" class="active"><a href="#form" aria-controls="form" role="tab" data-toggle="tab">Form</a></li>
-          <li role="presentation"><a href="#guests" aria-controls="guests" role="tab" data-toggle="tab">Guests</a></li>
+          <li role="presentation"><a href="#guests" id="guestsTab" aria-controls="guests" role="tab" data-toggle="tab">Guests</a></li>
         </ul>
 
         <!-- Tab panes -->
         <div class="tab-content">
           <!-- Tab pane 1 -->
-          <div role="tabpanel" class="tab-pane active" id="form">
+          <div ng-controller="FormController as vm" role="tabpanel" class="tab-pane active" id="form">
             <div>
+              <form name="GuestCheckIn" class="col-md-6 well" ng-submit="vm.addUser(GuestCheckIn.$valid)" novalidate>
 
-              <form class="col-md-6 well">
                 <div class="form-group">
-                  <label for="guest-name">Guest Name</label>
-                  <input type="text" class="form-control" id="guest-name" placeholder="">
-                </div>
+                  <label  for="guest-name">Guest Name</label>
+                  <div ng-show="GuestCheckIn.guestName.$error.required">Please specify a guest name.</div>
+                  <input ng-model="vm.guestName" type="text" class="form-control" id="guest-name" name="guestName" placeholder="" required>
+                </div>  
+
                 <div class="form-group">
                   <label for="transition-date">Transition Date</label>
-                  <input type="date" class="form-control" id="transition-date" placeholder="">
+                  <input type="date" class="form-control" id="transition-date" ng-model="vm.transitionDate" placeholder="" required>
                 </div>
+
                 <div class="radio">
                   <label>
-                    <input type="radio" name="pickup-dropoff" id="pickup" value="pickup" checked>
+                    <input type="radio" name="pickup-dropoff" id="pickup" value="pick up" ng-model="vm.pickupDropoff">
                     Pick-up
                   </label>
                 </div>
+
                 <div class="radio">
                   <label>
-                    <input type="radio" name="pickup-dropoff" id="dropoff" value="dropoff">
+                    <input type="radio" name="pickup-dropoff" id="dropoff" value="drop off" ng-model="vm.pickupDropoff" checked>
                     Drop-off
                   </label>
                 </div>
-                <div class="form-group">
+
+                <div ng-if="vm.pickupDropoff === 'pick up'" class="form-group">
                   <label for="location">Location</label>
-                  <textarea class="form-control" id="location"></textarea>
+                  <div ng-show="GuestCheckIn.location.$error.required" >Please specify a pickup location.</div>
+                  <input type="text" name="location" ng-model="vm.location" class="form-control"  id="location" required></input>
                 </div>
-                <button type="submit" class="btn">Submit</button>
+
+                <button type="submit" class="btn" ng-disabled="GuestCheckIn.$invalid" ng-click="tc.showGuestsTab()">Submit</button>
               </form>
+
 
               <!-- bound display -->
               <div ng-show="false" class="col-md-6 well">
-                <div ng-show="false" class="form-group">
+                <div ng-show="true" class="form-group">
                   <label>Name: </label>
-                  John Harvard
+                  {{guest-name | json}}
                 </div>
-                <div ng-show="false" class="form-group">
+                <div ng-show="true" class="form-group">
                   <label>Transition Date: </label>
                   today!
                 </div>
-                <div ng-show="false" class="form-group">
+                <div ng-show="true" class="form-group">
                   <label>Status: </label>
-                  drop-off
+                  drop-off{}
                 </div>
-                <div ng-show="false" class="form-group">
+                <div ng-show="true" class="form-group">
                   <label>Location: </label>
                   right here
                 </div>
@@ -90,17 +98,52 @@
           </div>
 
           <!-- Tab pane 2 -->
-          <div role="tabpanel" class="tab-pane" id="guests">
-            <ul class="list-unstyled">
-              <li>
-
-              </li>
-            </ul>
+          <div ng-controller="UsersController as uc" role="tabpanel" class="tab-pane" id="guests">
+          <ul ng-repeat="(index, user) in uc.usersData" class="list-unstyled">
+            <li >Name:{{user.name}}</li>
+            <li>Transition Date: {{user.transitionDate}}</li>
+            <li >Location: {{user.location}}</li>
+            <button class="btn" ng-click="uc.cycleStatus(index)" type="button" data-toggle="tooltip" data-original-title="Click to change guest status" data-placement="right" value="{{user.status}}" name="{{user.status}}">Status: {{user.status}}</button>
+            <!-- Button trigger modal -->
+            <button type="button" class="btn" ng-click="uc.storeIndex(index)" aria-label="delete guest" data-toggle="modal" data-target="#myModal">
+              Delete Guest
+            </button>
+          </ul>
+<!--           <div ng-show="" class="alert alert-danger alert-dismissible fade in" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+                <h4>Oh snap! You got an error!</h4>
+                <p>Change this and that and try again. Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit. Cras mattis consectetur purus sit amet fermentum.</p>
+                <p>
+                  <button type="button" class="btn btn-danger">Take this action</button>
+                  <button type="button" class="btn btn-default">Or do this</button>
+                </p>
+              </div>
+          </div> -->
+          <!-- Modal -->
+          <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                  <h4 class="modal-title" id="myModalLabel">Are you sure you want to delete?</h4>
+                </div>
+                <div class="modal-body">
+                  <button class="btn" data-dismiss="modal" ng-click="uc.deleteUser()" type="button" name=" Delete Yes">Yes</button>
+                  <button type="button" class="btn" data-dismiss="modal" aria-label="Delete No">No</button>
+                </div>
+              </div>
+            </div>
           </div>
+
 
         </div>
       </div>
     </div>
+    <script>
+        $(function () {
+          $('[data-toggle="tooltip"]').tooltip()
+         });
+    </script>
 
   </body>
 </html>
