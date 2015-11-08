@@ -14,8 +14,8 @@ angular.module('shuffling').service('UsersSvc', ['UsersInit', '$rootScope', func
 	}	
 
 
-	svc.addToStorage = function (index) {
-		users.push(index);
+	svc.addToStorage = function (userdata) {
+		users.push(userdata);
 		console.log(users);
 		_saveUsers();
 	};
