@@ -8,7 +8,7 @@ describe('FormController', function(){
   beforeEach(function() {
       module(function($provide){
       //mock localstorage()Storage
-        $provide.value('Users', [{
+        $provide.value('UsersInit', [{
             "name": "Mark Jarvon",
             "transition-date": "11/11/2013",
             "location":"Hell Wing", 
@@ -70,25 +70,6 @@ describe('FormController', function(){
 
 });
 
-describe('TabController', function(){
-  var tabController;
-  beforeEach(angular.mock.module('shuffling'));
-  beforeEach(angular.mock.inject(function($controller){
-    tabController = $controller('TabController');
-  }));
-
-  // After Submit, the user's tab will change to a list of all guests. 
-  it('should change the view to a list of all guests when a user submits the form', function () {
-
-  });
-
-
-}); // end TabController tests  
-
-describe('UsersController', function () {
-  beforeEach(angular.mock.module('shuffling'));
-});
-
 describe('UsersSvc', function () {
 
   var UsersSvc, Users;
@@ -97,7 +78,7 @@ describe('UsersSvc', function () {
   
   beforeEach(function() {
     module(function($provide){
-      var store = {};
+        var store = {};
       //provide init data to test w/no data in svc
       $provide.value('UsersInit', []);  
 
@@ -169,12 +150,17 @@ describe('UsersSvc', function () {
 
     // There should also be a delete option that removes a guest from the list. 
   it('should allow a user to delete a guest from the list', function() {
-
+    var date = new Date();
+    var data = {
+      name: "something", 
+      transitionDate : date, 
+      status: "arrived", 
+      location: "Mars"
+    };
+    UsersSvc.addToStorage(data);
+    var usersarray = UsersSvc.getUsers();
+    var length = usersarray.length;
+    UsersSvc.deleteUser(0);
+    expect(usersarray.length).toBe(length-1);
   });
-
 });
-
-/* Notes and Guidelines */
-//right combination of elements is rendered 
-//run through DOM to be sure all elements that should be there are, and the ones that shouldn't be there aren't 
-//all services and controllers should have a "describe"
