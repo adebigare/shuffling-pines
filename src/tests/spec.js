@@ -9,23 +9,25 @@ describe('FormController', function(){
       module(function($provide){
       //mock localstorage()Storage
         $provide.value('UsersInit', [{
-            "name": "Mark Jarvon",
-            "transition-date": "11/11/2013",
-            "location":"Hell Wing", 
-            "status" : "pick up"
+            'name': 'Mark Jarvon',
+            'transition-date': '11/11/2013',
+            'location':'Hell Wing', 
+            'status' : 'pick up',
+            'archived' : false
           },
           {
-            "name": "Frank Figura",
-            "transition-date": "9/13/1978",
-            "location":"Infirmiry",
-            "status" : "drop off"
+            'name': 'Frank Figura',
+            'transition-date': '9/13/1978',
+            'location':'Infirmiry',
+            'status' : 'drop off',
+            'archived' : false
           }
         ]);  
       });
 
       inject(function($controller, $rootScope, $injector){
 
-        scope = $rootScope.$new();
+        var scope = $rootScope.$new();
         users = $injector.get('UsersSvc');
         formController = $controller('FormController', {$scope: scope});
 
@@ -36,7 +38,7 @@ describe('FormController', function(){
         });
         spyOn(localStorage, 'setItem').and.callFake(function (key, value) {
           // concatenating to an empty string will store it as a stringify()
-          return store[key] =  value + '';
+          store[key] = value + '';
         });
         spyOn(localStorage, 'clear').and.callFake(function () {
             store = {};
@@ -49,15 +51,17 @@ describe('FormController', function(){
   it('should call the user service and pass correct data when addUser is called', function () {
     spyOn(users, 'addToStorage');
     var date = new Date();
-    formController.guestName = "something";
+    formController.guestName = 'something';
     formController.transitionDate = date;
-    formController.pickupDropoff = "pick up";
-    formController.location = "Mars";
+    formController.pickupDropoff = 'pick up';
+    formController.location = 'Mars';
+    formController.archived = false;
     var data = {
-      name: "something", 
+      name: 'something', 
       transitionDate : date, 
-      status: "pick up", 
-      location: "Mars"
+      status: 'pick up', 
+      location: 'Mars',
+      archived: false
     };
     formController.addUser();
     expect(users.addToStorage).toHaveBeenCalledWith(data);
@@ -88,7 +92,7 @@ describe('UsersSvc', function () {
       });
       spyOn(localStorage, 'setItem').and.callFake(function (key, value) {
         // concatenating to an empty string will store it as a stringify()
-        return store[key] =  value + '';
+         store[key] =  value + '';
       });
       spyOn(localStorage, 'clear').and.callFake(function () {
           store = {};
@@ -101,14 +105,14 @@ describe('UsersSvc', function () {
 
   // An option should exist for each to edit their status, following the rules of:
 
-  // "pick up" to "arrived"
-  it('should allow a user to change their status from "pick up" to arrived"', function() {
+  // 'pick up' to 'arrived'
+  it('should allow a user to change their status from "pick up" to arrived', function() {
     var date = new Date();
     var data = {
-      name: "something", 
+      name: 'something', 
       transitionDate : date, 
-      status: "pick up", 
-      location: "Mars"
+      status: 'pick up', 
+      location: 'Mars'
     };
     UsersSvc.addToStorage(data);
     UsersSvc.cycleStatus(0);
@@ -117,14 +121,14 @@ describe('UsersSvc', function () {
 
   });
 
-  // "drop off" to "arrived"
-  it('should allow a user to change their status from "drop off" to arrive"', function() {
+  // 'drop off' to 'arrived'
+  it('should allow a user to change their status from "drop off" to arrive', function() {
     var date = new Date();
     var data = {
-      name: "something", 
+      name: 'something', 
       transitionDate : date, 
-      status: "drop off", 
-      location: "Mars"
+      status: 'drop off', 
+      location: 'Mars'
     };
     UsersSvc.addToStorage(data);
     UsersSvc.cycleStatus(0);
@@ -133,14 +137,14 @@ describe('UsersSvc', function () {
 
   });
 
-  // "arrived" to "pick up". 
-  it('should allow a user to change their status from "arrived" to pick up"', function() {
+  // 'arrived' to 'pick up'. 
+  it('should allow a user to change their status from "arrived" to pick up', function() {
     var date = new Date();
     var data = {
-      name: "something", 
+      name: 'something', 
       transitionDate : date, 
-      status: "arrived", 
-      location: "Mars"
+      status: 'arrived', 
+      location: 'Mars'
     };
     UsersSvc.addToStorage(data);
     UsersSvc.cycleStatus(0);
@@ -148,19 +152,20 @@ describe('UsersSvc', function () {
     expect(usersarray[0].status).toBe('pick up');
   });
 
-    // There should also be a delete option that removes a guest from the list. 
+    // There should also be a delete option that removes a guest from the list, but keeps the record in localStorage. 
   it('should allow a user to delete a guest from the list', function() {
     var date = new Date();
     var data = {
-      name: "something", 
+      name: 'something', 
       transitionDate : date, 
-      status: "arrived", 
-      location: "Mars"
+      status: 'arrived', 
+      location: 'Mars', 
+      archived : false
     };
     UsersSvc.addToStorage(data);
     var usersarray = UsersSvc.getUsers();
-    var length = usersarray.length;
+    expect(usersarray[0].archived).toBe(false); //be sure no parse errors occured in upload to LS
     UsersSvc.deleteUser(0);
-    expect(usersarray.length).toBe(length-1);
+    expect(usersarray[0].archived).toBe(true); //when true, filter will prevent view in users' list
   });
 });
