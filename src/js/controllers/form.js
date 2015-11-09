@@ -1,7 +1,7 @@
 angular.module('shuffling')
 
 .controller('FormController', ['UsersSvc',  function(UsersSvc){
-	vm = this;
+	var vm = this;
 	_resetModel();
 
 	vm.addUser = function(){

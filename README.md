@@ -1,68 +1,22 @@
-The Application
+# Shuffling Pines
+## What is this?
+This simple Angular app is utilitarian in nature, and allows a user to input "guests" for a hypothetical nursing home. Once entered, the user may edit their status or delete the user. 
 
-This will be an AngularJS application. It's an administrative application. It will allow you add a guest, remove a guest, and change some information of a guest.
+## Getting up and running 
 
-The Form
+This app is written in javascript and runs on a combination of Node packages (managed by node package manager), with bower dependency management. 
 
-This will just allow you to enter the following data:
+It uses Jasmine and Karma for unit testing, Bootstrap for UI, Gulp for the build system, and Angular and JQuery to support the javascript development. 
 
-Guest Name
-Date of "transition"
-Pick up or Drop off?
-a select with 2 options
-Location for pickup
-only if the pick up option is selected
-Anything else you think is important information
-This form will use Angular models and binding to have a display showing a prettier version of the data below the form. On submit (not submit the page HTML style), add the data to an array of JSON objects to be held in localStorage. (https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage (Links to an external site.)). If there exists no data in localStorage, pre-populate the data with a few examples on application init. All localStorage and data methods should be done in a service. 
+###Installing
 
-Output the full data array to console.log. 
+These instructions assume that the user has already downloaded bower, node.js, and node package manager.  
 
-List
+- Open a terminal window
+- Navigate to the enclosing folder this project will reside within
+- Type:
+npm install
+bower install 
+gulp (will start the server, run unit tests and concatenate files)
 
-After Submit, the user's tab will change to a list of all guests. An option should exist for each to edit their status, following the rules of:
-
-"pick up" to "arrived"
-"drop off" to "arrived"
-"arrived" to "pick up". 
-There should also be a delete option that removes a guest from the list. The delete should have a confirm dialog. 
-
-The $scope and $rootScope deduction
-
-Do your best to avoid the use of $scope to pass variables. $scope can be used to invoke native, angular methods like $watch() or $digest(), but not for variables. 
-
-Tests
-
-Tests need to be written for all controllers and services. 
-
-Tests for controllers should mock the DOM elements and services. 
-
-Read through the description for the assignment. Find all of the spots where you can make a "should" statement out of the directions and make a test for each of them.
-
-ex: "an option should exist to change a pick-up to an arrived"
-
-ex: "entering a guest name and submitting should update the array with that name"
-
-ex: "after a submit, the tab focus should switch to the list view"
-
-Build
-The application should have a gulpfile. The gulp should build the CSS and the js and put them into a distribution or build directory. The following are required gulp tasks:
-
-Karma tests
-JSHint tests
-concat JS and CSS (for vendor libs and our application)
-uglify JS and minify the CSS
-A livereload using gulp connect that watches all js and css and html changes
-The README
-
- Add your name to the README.md and give the project a description. 
-
-Also, make sure your build process is outlined perfectly. A TF should be able to pull down your code, follow some simple directions and build your project, getting it running quickly. 
-
- 
-
-Extra Credit:
-
-- Each element in the list view is editable inline. (all data) (30pts)
-
-- The delete should be a soft delete. With a flag to mark it as deleted. (15pts) 
-
+The application will be running at http://localhost:8080 

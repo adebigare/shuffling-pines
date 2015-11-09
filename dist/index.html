@@ -99,10 +99,11 @@
 
           <!-- Tab pane 2 -->
           <div ng-controller="UsersController as uc" role="tabpanel" class="tab-pane" id="guests">
-          <ul ng-repeat="(index, user) in uc.usersData" class="list-unstyled">
+          <ul ng-repeat="(index, user) in uc.usersData track by $index " class="list-unstyled">
             <li >Name:{{user.name}}</li>
             <li>Transition Date: {{user.transitionDate}}</li>
             <li >Location: {{user.location}}</li>
+            <li>{{user.index}}</li>
             <button class="btn" ng-click="uc.cycleStatus(index)" type="button" data-toggle="tooltip" data-original-title="Click to change guest status" data-placement="right" value="{{user.status}}" name="{{user.status}}">Status: {{user.status}}</button>
             <!-- Button trigger modal -->
             <button type="button" class="btn" ng-click="uc.storeIndex(index)" aria-label="delete guest" data-toggle="modal" data-target="#myModal">
