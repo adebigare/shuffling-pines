@@ -4,11 +4,11 @@ var app = angular.module('shuffling', []);
 angular.module('shuffling')
 
 .controller('FormController', ['UsersSvc',  function(UsersSvc){
-	var vm = this;
+	vm = this;
 	_resetModel();
 
 	vm.addUser = function(){
-		vm.data = {name:vm.guestName, transitionDate : vm.transitionDate, status: vm.pickupDropoff, location: vm.location, archived : false};
+		vm.data = {name:vm.guestName, transitionDate : vm.transitionDate, status: vm.pickupDropoff, location: vm.location};
 		UsersSvc.addToStorage(vm.data);
 		_resetModel();
 	};
@@ -40,42 +40,7 @@ angular.module('shuffling')
 }]);
 
 
-angular.module('shuffling').controller('UsersController', ['UsersSvc', '$rootScope', function(UsersSvc, $rootScope){
-	var uc = this; 
-	var tempIndex;
-
-	uc.storeIndex = function(index) {
-		 tempIndex = index;
-	};
-
-	uc.cycleStatus = function(index) {
-		UsersSvc.cycleStatus(index);
-	};
-
-	uc.deleteUser = function() {
-		UsersSvc.deleteUser(tempIndex);
-		tempIndex = null;
-	};
-
-	$rootScope.$on('Users Updated', function() {
-		uc.usersData = UsersSvc.getUsers();
-	});
-
-	uc.usersData = UsersSvc.getUsers();
-}]);
-
-angular.module('shuffling').filter('showHideGuest', function(){
-	return function (input) {
-		var users = [];
-		angular.forEach(input, function(user) {
-			if (user.archived === false) {
-				users.push(user);
-			}
-		}); 
-		return users;
-	};
-});
-angular.module('shuffling').service('UsersSvc', ['UsersInit', '$rootScope', '$window', function(UsersInit, $rootScope, $window) {
+angular.module('shuffling').service('UsersSvc', ['UsersInit', '$rootScope', function(UsersInit, $rootScope) {
 	// initialize local storage 
 	var svc = this;
 	var users = [];
@@ -86,14 +51,13 @@ angular.module('shuffling').service('UsersSvc', ['UsersInit', '$rootScope', '$wi
 	} 
 	if (_storageAvailable('localStorage')) {
 		users = JSON.parse(localStorage.getItem('session'));
-		console.log(users);
 	} else {
 		console.log('Error: Local Storage Unavailable. Are you Incognito?');
 	}	
 
 
-	svc.addToStorage = function (userdata) {
-		users.push(userdata);
+	svc.addToStorage = function (index) {
+		users.push(index);
 		console.log(users);
 		_saveUsers();
 	};
@@ -106,10 +70,10 @@ angular.module('shuffling').service('UsersSvc', ['UsersInit', '$rootScope', '$wi
 		 _getUser(index);
 		var status = user.status;		
 
-		if (status === 'pick up' || status === 'drop off') {
-			status = 'arrived';
+		if (status === 'pick up' || status === "drop off") {
+			status = "arrived";
 		} else {
-			status = 'pick up';
+			status = "pick up";
 		}
 		user.status = status;
 		users[index] = user;
@@ -118,9 +82,11 @@ angular.module('shuffling').service('UsersSvc', ['UsersInit', '$rootScope', '$wi
 	};
 
 	svc.deleteUser = function(index) {
-		user = _getUser(index);
-		user.archived = true;
-		users[index] = user;
+		users.splice(index, 1);
+		if (users.length === 0) {
+			localStorage.clear();
+		}
+		// svc.getUsers();
 		_saveUsers();
 	};
 
@@ -140,7 +106,7 @@ angular.module('shuffling').service('UsersSvc', ['UsersInit', '$rootScope', '$wi
 	function _storageAvailable (type) {
 		try {
 			//Is storage available? Yes, return true, else return false
-			var storage = $window[type],
+			var storage = window[type],
 				x = '__storage_test__';
 			storage.setItem(x, x);
 			storage.removeItem(x);
@@ -152,22 +118,43 @@ angular.module('shuffling').service('UsersSvc', ['UsersInit', '$rootScope', '$wi
 	}
 }]);
 
+angular.module('shuffling').controller('UsersController', ['UsersSvc', '$rootScope', function(UsersSvc, $rootScope){
+	uc = this; 
+	var tempIndex;
+
+	uc.storeIndex = function(index) {
+		 tempIndex = index;
+	};
+
+	uc.cycleStatus = function(index) {
+		UsersSvc.cycleStatus(index);
+	};
+
+	uc.deleteUser = function(tempIndex) {
+		UsersSvc.deleteUser(tempIndex);
+		tempIndex = '';
+	};
+
+	$rootScope.$on('Users Updated', function() {
+		uc.usersData = UsersSvc.getUsers();
+	});
+
+	uc.usersData = UsersSvc.getUsers();
+}]);
 
 
 angular.module('shuffling').value('UsersInit', [
 	{
-		'name': 'Freida Callo',
-		'transitionDate': '11/11/2013',
-		'location':'East Wing',
-		'status': 'pick up',
-		'archived' : false
+		"name": "Freida Callo",
+		"transitionDate": "11/11/2013",
+		"location":"East Wing",
+		"status": "pick up"
 	},
 	{
-		'name': 'Frank Reynolds',
-		'transitionDate': '4/13/1978',
-		'location':'Unknown', 
-		'status': 'drop off',
-		'archived' : false
+		"name": "Frank Reynolds",
+		"transitionDate": "4/13/1978",
+		"location":"Unknown", 
+		"status": "drop off"
 	},
 
 ]);

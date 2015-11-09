@@ -99,7 +99,7 @@
 
           <!-- Tab pane 2 -->
           <div ng-controller="UsersController as uc" role="tabpanel" class="tab-pane" id="guests">
-          <ul ng-repeat="(index, user) in uc.usersData | showHideGuest : archived : false" class="list-unstyled">
+          <ul ng-repeat="(index, user) in uc.usersData" class="list-unstyled">
             <li >Name:{{user.name}}</li>
             <li>Transition Date: {{user.transitionDate}}</li>
             <li >Location: {{user.location}}</li>
@@ -131,7 +131,7 @@
     </div>
     <script>
         $(function () {
-          $('[data-toggle="tooltip"]').tooltip();
+          $('[data-toggle="tooltip"]').tooltip()
          });
     </script>
 

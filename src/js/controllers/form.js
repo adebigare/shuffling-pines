@@ -1,11 +1,11 @@
 angular.module('shuffling')
 
 .controller('FormController', ['UsersSvc',  function(UsersSvc){
-	var vm = this;
+	vm = this;
 	_resetModel();
 
 	vm.addUser = function(){
-		vm.data = {name:vm.guestName, transitionDate : vm.transitionDate, status: vm.pickupDropoff, location: vm.location, archived : false};
+		vm.data = {name:vm.guestName, transitionDate : vm.transitionDate, status: vm.pickupDropoff, location: vm.location};
 		UsersSvc.addToStorage(vm.data);
 		_resetModel();
 	};
